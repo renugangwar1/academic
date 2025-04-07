@@ -1,0 +1,31 @@
+<tbody class="table-group-divider">
+                            @foreach($students as $key=>$student)
+                            <tr>
+                                <th scope="row">{{$key+1}}</th>
+                                <td class="text-uppercase text-start">{{$student->name}}</td>
+                                <td class="text-uppercase text-start">{{$student->rollnumber}}</td>
+                                <td class="text-uppercase text-nowrap">{{$student->batch}}</td>
+                                <td class="text-uppercase">{{$student->course}}</td>
+                                <td>
+                                    @if($student->optionalSubject)
+                                        @foreach($student->optionalSubject as $key=>$val)
+                                            @if($val)
+                                                <div class="text-uppercase">({{$key}}:<strong>{{$val ?? 'N/A'}}</strong>)</div>
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td class="text-capitalize text-start align-content-center text-nowrap">@if(isset($student->email_verified_at)) <span class="text-success fw-bold border p-2 rounded border-success">Active</span> @else <span class="text-danger fw-bold border p-2 rounded border-danger">In Active</span>@endif</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-danger" onclick="event.preventDefault(); if(confirm('Action Required')){ $('.delete-student_{{$student->id}}').submit(); }">delete</button>
+
+                                        <form class="delete-student_{{$student->id}}" action="{{Route('admin.deletestudent')}}" method="POST" class="d-none">
+                                            @csrf
+                                            <input type="hidden" value="{{$student->id}}" name="id"/>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>

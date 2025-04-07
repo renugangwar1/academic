@@ -1,0 +1,56 @@
+// $reappear = explode(',', str_replace(' ','',$check->Mid_Reappear_subject));
+    
+    // if(in_array($singlesubject->Subject_code,$reappear)){
+    //     $endmarksforjson['End_'.$singlesubject->Subject_code] = 0;
+    // }
+
+    // $subarray = array_merge($appear,$reappear);
+
+    // if(strlen($check->Mid_Appear_subject) <= 0){
+    //     return $record ?? null;
+    // }
+
+    // foreach($subarray as $single){
+    //     $rowkey = 'end_'.strtolower($single);
+    //     $endtermmaxmark = Subject::where('Subject_code',strtoupper($single))->select('End_max_mark')->first();
+    //     if($row[$rowkey] > $endtermmaxmark->End_max_mark){// skip entry if the mark more then Max mark
+    //         return null;
+    //     }
+        
+    //     $endtermmark = isset($row[$rowkey]) ? ($row[$rowkey] >= 0 && $row[$rowkey] <= $endtermmaxmark->End_max_mark ? $row[$rowkey] : 'AB') : 'AB';
+    //     $endmarksforjson['End_'.$single] = $endtermmark;
+    // }
+
+
+    // public function rules(): array
+    // {
+
+    //     $getsubjects = Subject::where(['course_id'=>$this->tb->id,'Semester'=>$this->semester])->orderBy('Subject_code')->get();
+
+    //     $primaryrule = ['*.student_name'=>'required',
+    //     '*.student_nchm_roll_number'=>'required',
+    //     '*.student_academic_year'=>'required'];
+
+    //     $midrule = $primaryrule;
+    //     foreach($getsubjects as $single){
+    //         $midrule['*.mid_'.$single->Subject_code] = 'nullable';
+    //     }
+
+    //     $endrule = $midrule;
+    //     foreach($getsubjects as $single){
+    //         $endrule['*.end_'.$single->Subject_code] = 'nullable';
+    //     }
+
+    //     return $endrule;
+    // }
+
+    // public function customValidationMessages()
+    // {
+    //     $getsubjects = Subject::where(['course_id'=>$this->tb->id,'Semester'=>$this->semester])->orderBy('Subject_code')->get();
+
+    //     $primarymsg = ['student_name.required'=>'Please Provide Student Name',
+    //     'student_nchm_roll_number.required'=>'Please Provide NCHM Roll Number',
+    //     'student_academic_year.required'=>'Please Provide Student Academic Year'];
+
+    //     return $primarymsg;
+    // }

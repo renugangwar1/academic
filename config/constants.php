@@ -1,0 +1,62 @@
+<?php
+
+$variables = [
+    'db' => [
+        '1' => 'First',
+        '2' => 'Second',
+        '3' => 'Thired',
+        '4' => 'Forth',
+        '5' => 'Fifth',
+        '6' => 'Six',
+    ],
+    'options' => [
+        'msc_mid_minMark' => '6',
+        'msc_mid_Reappear' => '3',
+        'msc_end_minMark' => '6',
+        'msc_end_Reappear' => '3',
+    ],
+    'removetable'=>[
+        "migrations",
+        "users",
+        "password_reset_tokens",
+        "password_resets",
+        "failed_jobs",
+        "personal_access_tokens",
+        "t_b_admit_cards",
+        "subject_masters",
+        "institutes",
+        "msc_first_backups",
+        "bsc_first_backups",
+        "bsc_second_backups",
+        "msc_second_backups",
+        "msc_third_backups",
+        "bsc_third_backups",
+        "msc_fourth_backups",
+        "bsc_fourth_backups",
+        "settings",
+        "refrence_subject_masters",
+        "excel_logs",
+        "students",
+        "institutes",
+    ],
+    'menuRoute' => [
+        1 => 'admin.institutemaster',
+        2 => 'admin.subjectmaster',
+        3 => 'excel.Import',
+        4 => 'excel.export',
+        5 => 'compile_marks',
+        6 => 'generate_result',
+        7 => 'jnuresult',
+    ],
+    'menuename'=>[
+        1 => 'Institute Master',
+        2 => 'Subject Master',
+        3 => 'Import',
+        4 => 'Export',
+        5 => 'Compile Result',
+        6 => 'Generate Result',
+        7 => 'JNU Result',
+    ],
+];
+
+return $variables;

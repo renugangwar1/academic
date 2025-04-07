@@ -1,0 +1,58 @@
+<div class="bg-body-secondary">
+    <div class="container py-4">
+        <a href="{{Route('jnuresult')}}" class="btn btn-danger">Back</a>
+        <div class="row justify-content-center">
+            <div class="text-center p-5 mx-auto mt-3 rounded-2 border-dark bg-white">
+                <div class="">
+                    <table class="table border border-dark table-striped-columns table-auto overflow-y-auto w-100 table-border border-dark">
+                        <thead>
+                            <tr>
+                                <td scope="col" class="border border-dark" rowspan="3">S.No</td>
+                                <td scope="col" class="border border-dark" rowspan="3">Enrolment Number</td>
+                                <td scope="col" class="border border-dark" rowspan="2">Name of Participants</td>
+                                @foreach($db as $code)
+                                    <td scope="col" class="border border-dark" colspan="2">{{substr($code->Subject_code,3)}}</td>
+                                @endforeach
+                                <td scope="col" class="border border-dark" rowspan="2">Total Points</td>
+                                <td scope="col" class="border border-dark" rowspan="3">CGPA</td>
+                            </tr>
+                            <tr>
+                                @foreach($db as $subject)
+                                    <td scope="col" class="border border-dark" colspan="2"><span class="rotate-90 h-50">{{$subject->Subject_name}}</span></td>
+                                @endforeach
+                            </tr>
+                            <tr>
+                                <td scope="col" class="text-end fw-bold">Credits</td>
+                                @foreach($db as $credit)
+                                    <td scope="col" class="border border-dark" colspan="2">{{$credit->Credit}}</td>
+                                @endforeach
+                                <td scope="col" class="border border-dark">{{$totalcredit}}</td>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            @foreach($results as $sn=>$result)
+                                <tr class="fw-bold">
+                                    <td class="border border-dark">{{$sn+1}}</td>
+                                    <td class="border border-dark">{{$result->Stud_nchm_roll_number ? $result->Stud_nchm_roll_number : '--'}}</td>
+                                    <td class="border border-dark">{{$result->Stud_name ? $result->Stud_name : '--'}}</td>
+                                    @foreach($db as $sub)
+                                        @php
+                                            $yourInstance = new columgen;
+                                            $gradPoint = $yourInstance->columngen($sub->Subject_code,'Grade_Point_');
+                                            $grad = $yourInstance->columngen($sub->Subject_code,'Grade_');
+                                        @endphp
+                                        <td class="border border-dark">{{$result->$gradPoint}}</td>
+                                        <td class="border border-dark">{{$result->$grad}}</td>
+                                    @endforeach
+                                    <td class="border border-dark">{{$result->Grand_Credit_Point}}</td>
+                                    <td class="border border-dark">{{$result->End_Result_CGPA}}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+</div>
+</div>

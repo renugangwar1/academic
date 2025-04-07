@@ -1,0 +1,438 @@
+public function compilingResult(Request $request)
+{
+    try {
+        set_time_limit(0);
+        
+        $subject = new conmmandatacall();
+        $currentcourse = Course::where('Course_name', $request->course)->first();
+        
+        $dataQuery = ResultData::where([
+            'course_id' => $request->course,
+            'Stud_batch' => $request->batch,
+            'Stud_semester' => $request->semester,
+        ]);
+
+        if ($request->institute != null) {
+            $dataQuery->where('institute_id', $request->institute);
+        }
+
+        $totalData = $dataQuery->count();
+
+        if ($totalData === 0) {
+            return response()->json(['success' => false, 'message' => 'Data does not exist.'], 404);
+        }
+
+        if ($request->term == 'Mid') {
+            $dataQuery->whereNull('Mid_Result');
+        } elseif ($request->term == 'End') {
+            $dataQuery->whereNull('End_Reappear_subject');
+        }
+
+        $uncompiledDataCount = $dataQuery->count();
+
+        if ($uncompiledDataCount === 0) {
+            return response()->json(['success' => false, 'message' => 'Data Already Compiled!'], 400);
+        }
+
+        $existingArray = [];
+        
+        $dataQuery->chunk(1000, function ($dataChunk) use ($request, &$existingArray) {
+            $newArray = SubjectCompailer::BscOrMsccourse($dataChunk, $request->course, $request->term, $request->semester);
+            $existingArray = array_merge($existingArray, $newArray);
+        });
+
+        if (empty($existingArray)) {
+            return response()->json(['success' => false, 'message' => 'No data to compile.'], 400);
+        }
+
+        $compileresult = ResultData::whereIn('id', $existingArray)
+            ->select('Stud_nchm_roll_number', 'Stud_name', 'Stud_academic_year', 'Mid_Reappear_subject', 'Mid_Appear_subject', 'Total_Reappear_subject', 'Reappear_subject_count')
+            ->get();
+
+        if ($request->term == 'Mid') {
+            $view = view('components.midcompile', compact('compileresult'));
+        } elseif ($request->term == 'End') {
+            $view = view('components.endcompile', compact('compileresult'));
+        }
+
+        return $view;
+
+    } catch (CustomeMessageDisplay $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
+
+
+
+
+public function compilingResult(Request $request){
+    try{
+        set_time_limit(0);
+        
+        $subject = new conmmandatacall();
+        
+        $currentcourse = Course::where('Course_name',$request->course)->first();
+        
+        $data =  ResultData::where([
+            'course_id'=>$request->course,
+            'Stud_batch'=>$request->batch,
+            'Stud_semester'=>$request->semester,
+        ])->orderBy('Stud_nchm_roll_number');
+    
+        if($request->institute != null){
+            $data = $data->where('institute_id',$request->institute);
+        }
+
+        $totaldata = $data->count();
+
+        if($totaldata > 0){
+            
+            if($request->term == 'Mid'){
+                $data = $data->where('Mid_Result',Null);
+            }else if($request->term == 'End'){
+                $data = $data->where('End_Reappear_subject',Null);
+            }
+
+            if($data->count() === 0){
+                $errorMessage = 'Data Already Compailed!';
+                return response()->json(['success' => false, 'message' => $errorMessage], 500);
+            }
+
+            $offset = 0;
+            $limit = 1000;
+            
+            $existingArray = [];
+            while ($offset < $totaldata) {
+                
+                $dataChunk = conmmandatacall::fetchData($data,$offset,$limit);
+                
+                if ($dataChunk->isEmpty()) {
+                    break;
+                }
+                
+                $sql = $dataChunk;
+                
+                $newArray = SubjectCompailer::BscOrMsccourse($sql, $request->course, $request->term, $request->semester);
+
+                
+                array_splice($existingArray, count($existingArray), 0, $newArray);
+                
+                $offset += $limit;
+            }
+            
+            $compileresult = ResultData::whereIn('id', $existingArray);
+            
+            $compileresult = $compileresult->select('Stud_nchm_roll_number','Stud_name','Stud_academic_year','Mid_Reappear_subject','Mid_Appear_subject','Total_Reappear_subject','Reappear_subject_count')->get();
+            
+            if($request->term == 'Mid'){
+                $view = view('components.midcompile',compact('compileresult'));
+            }else if($request->term == 'End'){
+                $view = view('components.endcompile',compact('compileresult'));
+            }
+
+            return $view;
+        }else{
+            $errorMessage = 'Data does not exist.';
+            return response()->json(['success' => false, 'message' => $errorMessage], 500);
+        }
+    } catch (CustomeMessageDisplay $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
+
+
+
+
+class SubjectCompailer{
+    // bsc and msc course
+    public static function BscOrMsccourse(object $list,int $course_id,string $term,int $semester){
+        if (!isset($list)) {
+            throw new CustomeMessageDisplay('The Data Collection is missing.');
+        }
+        if (!isset($course_id)) {
+            throw new CustomeMessageDisplay('The Course Id is missing.');
+        }
+        if (!isset($term)) {
+            throw new CustomeMessageDisplay('The Term is missing.');
+        }
+        if (!isset($semester)) {
+            throw new CustomeMessageDisplay('The Semester is missing.');
+        }
+
+        $subject = Subject::where(['course_id'=>$course_id,'Semester'=>$semester])->orderBy('Subject_code')->get();
+
+        $checkopt = $subject;
+        $optsubcount = $checkopt->where('Optional_subject',1)->count();
+        $total = count($subject)-($optsubcount/2);
+        $helf = (int)number_format($total/2);
+        if($list != null){
+            $entryid = [];
+            foreach($list as $single){
+                if($term != null){//condition to check and add subject to appearsubject or reappearsubject with checking optionalsubject codition
+                    $appearsub = '';
+                    $reappearsub = '';
+                    $marks = $term.'_marks';
+                    $currentstudent = jsondecodetoarray($single->$marks);
+                    
+                    if(isset($currentstudent)){
+                        foreach($currentstudent as $sub=>$mark){
+                            $subsplit = explode('_',$sub);
+                            $currentsubd = $subject;
+                            $passmark = $term.'_pass_mark';
+                            if($mark < $currentsubd->where('Subject_code',$subsplit[1])->first()->$passmark){
+                                $reappearsub = $reappearsub.($reappearsub != null ? ' , ' : '').$subsplit[1];
+                            }else{
+                                $appearsub = $appearsub.($appearsub != null ? ' , ' : '').$subsplit[1];
+                            }
+                        }
+                    }
+                }else{
+                    return false;
+                }
+                
+                if($term == 'Mid'){// mid term compailing section
+                    $entry = ResultData::where(['Stud_nchm_roll_number'=>$single->Stud_nchm_roll_number,'Stud_semester'=>$semester])->update([
+                        'Mid_Reappear_subject'=>$reappearsub,
+                        'Mid_Appear_subject'=>$appearsub,
+                        'Reappear_subject_count'=>stringcount($reappearsub),
+                        'Total_Reappear_subject'=>totalreapearconverter($reappearsub,$term),
+                        'Compaile_date'=>now(),
+                        'Mid_Result'=>stringcount($reappearsub) === 0 ? 'Pass' : (stringcount($appearsub) >= $helf ? 'Reappear' : 'Fail'),// store for check in admitcard print
+                    ]);
+
+                    $entryid[] = ResultData::where(['Stud_nchm_roll_number'=>$single->Stud_nchm_roll_number,'Stud_semester'=>$semester])->first()->id;
+                    
+                }else if(isset($single->Mid_Result)){// end term compailing section
+                    if($single->Mid_Result != 'Fail' && $single->End_marks === null){
+                        abort(500, "End tearm data of institute {$single->institute_id} not found.");
+                    }
+
+                    $midmraks = jsondecodetoarray($single->Mid_marks,true);
+                    $endmraks = jsondecodetoarray($single->End_marks,true);
+                    $subtotal = [];
+                    $subgrad = [];
+                    $subgradpoint = [];
+                    $subcredit = [];
+                    $subcreditpoint = [];
+
+                    $endsave = [];
+
+                    foreach($subject as $singlesub){
+                        if($singlesub->Optional_subject == 0 ||  $singlesub->Optional_subject == 1 && $single->Optional_subject === $singlesub->Subject_code){
+                            
+                            $midsearch = 'Mid_'.$singlesub->Subject_code;
+                            $endsearch = 'End_'.$singlesub->Subject_code;
+                            
+                            $midsearchvalue = $midmraks[$midsearch] ?? 0;
+                            $endsearchvalue = $endmraks[$endsearch] ?? 0;
+        
+        
+                            $subjectmaxobtainmark = ((double) $singlesub->Mid_max_mark + (double) $singlesub->End_max_mark);
+                            
+                            $total = (is_numeric($midsearchvalue) === true && $midsearchvalue >= 0 ? $midsearchvalue : 0)  + (is_numeric($endsearchvalue) === true && $endsearchvalue >= 0 ? $endsearchvalue : 0);
+                            
+        
+                            $subtotal[$singlesub->Subject_code] = $total;
+                            $subgrad[$singlesub->Subject_code] = $grad = $endsearchvalue < $singlesub->End_pass_mark ? gradefinder(0) : gradefinder(percentfinder($subjectmaxobtainmark,$total));
+                            $subgradpoint[$singlesub->Subject_code] = $grad == 'F' ? 0 : gradepointfinder(percentfinder($subjectmaxobtainmark,$total));
+                            $subcredit[$singlesub->Subject_code] = $singlesub->Credit;
+                            $subcreditpoint[$singlesub->Subject_code] = $grad == 'F' ? 0 : ((int) gradepointfinder(percentfinder($subjectmaxobtainmark,$total))) * (int) $singlesub->Credit;
+                        }
+                    }
+                    
+                    $endsave['Marks_total'] = json_encode($subtotal);
+                    $endsave['Marks_grade'] = json_encode($subgrad);
+                    $endsave['Marks_grade_point'] = json_encode($subgradpoint);
+                    $endsave['Marks_credit'] = json_encode($subcredit);
+                    $endsave['Marks_credit_point'] = json_encode($subcreditpoint);
+                    
+                    $updateendmarks = ResultData::where(['Stud_nchm_roll_number'=>$single->Stud_nchm_roll_number,'Stud_semester'=>$semester])->update($endsave);
+                    
+                    if($updateendmarks){
+
+                        $totalReappear = totalreapearconverter($single->Mid_Reappear_subject,'Mid').(strlen($reappearsub) > 0 && strlen($single->Mid_Reappear_subject) > 0 ? ', ' : '').totalreapearconverter($reappearsub,$term);
+                        $totalReappearcount = stringcount($single->Mid_Reappear_subject) + stringcount($reappearsub);
+                        
+                        //get min paper clear count
+                        $passsubcount = stringcount($reappearsub) + stringcount($appearsub);
+
+                        $entry = ResultData::where(['Stud_nchm_roll_number'=>$single->Stud_nchm_roll_number,'Stud_semester'=>$semester])->update([
+                            'End_Reappear_subject'=> $reappearsub,
+                            'Total_Reappear_subject'=>$totalReappear,
+                            'Reappear_subject_count'=>$totalReappearcount,
+                        ]);
+
+                        $entryid[] = ResultData::where(['Stud_nchm_roll_number'=>$single->Stud_nchm_roll_number,'Stud_semester'=>$semester])->first()->id;
+                    }
+                }else{
+                    abort(500, "Mid tearm data not compaild.");
+                }
+            }
+            return $entryid;
+        }else{
+            abort(500, "Data is not Existed.");
+        }
+    }
+    // end bsc and msc course
+}
+
+
+
+
+public function generatingResult(Request $request)
+{
+    // Validate the request inputs
+    $request->validate([
+        'course' => 'required',
+        'batch' => 'required',
+        'semester' => 'required'
+    ], [
+        'course.required' => 'The course field is required.',
+        'batch.required' => 'The batch field is required.',
+        'semester.required' => 'The semester field is required.'
+    ]);
+
+    try {
+        set_time_limit(0);
+
+        // Build the initial query
+        $query = ResultData::where([
+            'course_id' => $request->course,
+            'Stud_batch' => $request->batch,
+            'Stud_semester' => $request->semester,
+        ]);
+
+        // Filter by institute if provided
+        if ($request->has('institute')) {
+            $query->where('institute_id', $request->institute);
+        }
+
+        // Check if data exists
+        if ($query->count() === 0) {
+            return response()->json(['success' => false, 'message' => 'Data not available for current selection!'], 500);
+        }
+
+        // Check for missing End term marks
+        $missingMarks = $query->where('Mid_Result', '!=', 'Fail')->whereNull('End_marks')->get();
+        if ($missingMarks->isNotEmpty()) {
+            $missingInstitutes = $missingMarks->pluck('institute_id')->unique();
+            $errorMessages = $missingInstitutes->map(function ($instid) {
+                return "End term marks are missing for Institute {$instid}!";
+            })->toArray();
+            return response()->json(['success' => false, 'message' => implode("\n", $errorMessages)], 500);
+        }
+
+        // Filter for non-null Mid_Result and null End_Result
+        $query->whereNotNull('Mid_Result')->whereNull('End_Result');
+
+        // Process data in chunks
+        $existingArray = [];
+        $query->chunk(1000, function($dataChunk) use (&$existingArray, $request) {
+            $newArray = ResultGenerate::BscOrMsccourse($dataChunk, $request->course, (int)$request->semester);
+            $existingArray = array_merge($existingArray, $newArray);
+        });
+
+        // Fetch the generated results
+        $generatedResults = ResultData::whereIn('id', $existingArray)->get();
+
+        // Check if any results exist
+        if ($generatedResults->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'Data does not exist.'], 500);
+        }
+
+        // Render the results view
+        return view('components.resultcompile', compact('generatedResults'));
+
+    } catch (CustomeMessageDisplay $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
+
+
+
+public function generatingResult(Request $request){
+        $request->validate([
+            'course' => 'required',
+            'batch' => 'required',
+            'semester' => 'required'
+        ], [
+            'course.required' => 'The course field is required.',
+            'batch.required' => 'The batch field is required.',
+            'semester.required' => 'The semester field is required.'
+        ]);
+
+        try {
+            set_time_limit(0);
+            
+            $data = ResultData::where([
+                'course_id'=>$request->course,
+                'Stud_batch'=>$request->batch,
+                'Stud_semester'=>$request->semester,
+            ]);
+
+            if($request->institute != null){
+                $data = $data->orwhere('institute_id',$request->institute);
+            }
+
+            if($data->count() === 0){
+                abort('500','Data not available for current selection!');
+            }
+
+            $checkforinstmarksmissing = $data->get();
+
+            $checkforinstmarksmissing = $checkforinstmarksmissing->where('Mid_Result','!=','Fail')->where('End_marks',NULL);
+
+            if(count($checkforinstmarksmissing) != 0){
+                $missingdatainstitute = $checkforinstmarksmissing->pluck('institute_id')->unique()->toArray();
+                $multipleerrormsg = [];
+                foreach($missingdatainstitute as $instid){
+                    $multipleerrormsg[] = "End tearm marks is missing of Institute {$instid}!";
+                }
+                $errormsg = implode("\n", $multipleerrormsg);
+                return response()->json(['success' => false, 'message' => $errormsg], 500);
+            }
+
+            $data = $data->where('Mid_Result','!=',Null)->where('End_Result',NULL);
+
+            $totaldata = $data->count();
+            $existingArray = [];
+            if($totaldata > 0){
+
+                $offset = 0;
+                $limit = 1000;
+                
+                while ($offset < $totaldata) {
+                    $dataChunk = conmmandatacall::fetchData($data,$offset,$limit);
+                    
+                    if ($dataChunk->isEmpty()) {
+                        break;
+                    }
+                    
+                    $sql = $dataChunk;
+                    
+                    $newArray = ResultGenerate::BscOrMsccourse($sql,$request->course,(int)$request->semester);
+                    
+                    array_splice($existingArray, count($existingArray), 0, $newArray);
+
+                    $offset += $limit;
+                }
+            }else{
+                abort('500','The result has already been generated!');
+            }
+            
+            $generateresult = ResultData::whereIn('id', $existingArray);
+
+            $result = $generateresult->get();
+
+            if(count($result) > 0){
+                $view = view('components.resultcompile',compact('result'));
+                
+                return $view;
+            }else{
+                $errorMessage = 'Data does not exist.';
+                return response()->json(['success' => false, 'message' => $errorMessage], 500);
+            }
+        } catch (CustomeMessageDisplay $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }

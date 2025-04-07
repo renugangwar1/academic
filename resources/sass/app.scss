@@ -1,0 +1,97 @@
+// Fonts
+@import url('https://fonts.bunny.net/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@100..900&display=swap');
+
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+
+@font-face {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    src: url('/public/assets/fonts/Noto_Sans_Devanagari/NotoSansDevanagari-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.nav-pills {
+    --bs-nav-pills-link-active-color: #000;
+    --bs-nav-pills-link-active-bg: #f5f5f5;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  border:1px solid #000;
+}
+
+.mainbg{
+    width: 70%;
+    border: 1px solid;
+}
+.pb-8{
+    padding-bottom: 8rem !important;
+}
+
+.dataTables_wrapper{
+    --bs-bg-opacity: 1;
+    background-color: var(--bs-dark-bg-subtle) !important;
+    padding: 0.25rem !important;
+}
+
+.dataTables_filter{
+    padding-bottom: 0.25rem !important;
+}
+
+.dataTables_filter input{
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.top-nv-13{
+    top: -13px !important;
+}
+
+.start-49{
+    left: 49% !important;
+}
+
+.w-4rem{
+    width: 4rem;
+}
+
+.w-6rem{
+    width: 6rem;
+}
+
+.table td,tr {
+    background-color: white !important;
+}
+
+.rotate-90 {
+    writing-mode: vertical-lr;
+    transform: rotate(-180deg);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+button{
+    font-family: var(--bs-font-monospace) !important;
+}
+
+
+// 404 error style
+.bsb-btn-xl{--bs-btn-padding-y:0.625rem;--bs-btn-padding-x:1.25rem;--bs-btn-font-size:calc(1.26rem + 0.12vw);--bs-btn-border-radius:var(--bs-border-radius-lg)}@media(min-width:1200px){.bsb-btn-xl{--bs-btn-font-size:1.35rem}}.bsb-btn-2xl{--bs-btn-padding-y:0.75rem;--bs-btn-padding-x:1.5rem;--bs-btn-font-size:calc(1.27rem + 0.24vw);--bs-btn-border-radius:var(--bs-border-radius-lg)}@media(min-width:1200px){.bsb-btn-2xl{--bs-btn-font-size:1.45rem}}.bsb-btn-3xl{--bs-btn-padding-y:0.875rem;--bs-btn-padding-x:1.75rem;--bs-btn-font-size:calc(1.28rem + 0.36vw);--bs-btn-border-radius:var(--bs-border-radius-lg)}@media(min-width:1200px){.bsb-btn-3xl{--bs-btn-font-size:1.55rem}}.bsb-btn-4xl{--bs-btn-padding-y:1rem;--bs-btn-padding-x:2rem;--bs-btn-font-size:calc(1.29rem + 0.48vw);--bs-btn-border-radius:var(--bs-border-radius-lg)}@media(min-width:1200px){.bsb-btn-4xl{--bs-btn-font-size:1.65rem}}.bsb-btn-5xl{--bs-btn-padding-y:1.125rem;--bs-btn-padding-x:2.25rem;--bs-btn-font-size:calc(1.3rem + 0.6vw);--bs-btn-border-radius:var(--bs-border-radius-lg)}@media(min-width:1200px){.bsb-btn-5xl{--bs-btn-font-size:1.75rem}}.bsb-flip{transform:scale(-1)}.bsb-flip-h{transform:scaleX(-1)}.bsb-flip-v{transform:scaleY(-1)}
+// end 404 style

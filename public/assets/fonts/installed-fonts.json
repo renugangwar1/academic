@@ -1,0 +1,45 @@
+{
+    "noto sans devanagari": {
+        "normal": "C:\\xampp\\htdocs\\admitcard\\public\\assets\/fonts\/\/noto_sans_devanagari_normal_cee0ff363034436c5cd5ad821af928ad",
+        "bold": "noto_sans_devanagari_bold_d5a71313322487093ce58d0d04f1e260"
+    },
+    "sarala": {
+        "normal": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/sarala_normal_af48c4421a240a9c9975b6910d838280",
+        "bold": "sarala_bold_9c68049c981b6bc6456a4a6c56e64b23"
+    },
+    "yantramanav": {
+        "100": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/yantramanav_100_c4f4515638cdc541e33c217d57105495",
+        "300": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/yantramanav_300_7276efd4e39bdce49d71c6827d5ab93d",
+        "normal": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/yantramanav_normal_fdb37f686c6696ea5d39be4e6eb90da8",
+        "500": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/yantramanav_500_bff1f5791855f484508bdc7ceb123b75",
+        "bold": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/yantramanav_bold_13b51b40c7563181a6a4bbe51740d931",
+        "900": "yantramanav_900_a939255606241d6dcdff904c7008a392"
+    },
+    "noto sans": {
+        "100_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_100_italic_37dae1b3d3a25652ec53c487eb0723d9",
+        "200_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_200_italic_d434047342d7f47c5f0683dd619a0197",
+        "300_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_300_italic_d8996f3575f214970c4f701c83c359a5",
+        "italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_italic_814c9c31dfffb17fbfbb4d4b8032dd08",
+        "500_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_500_italic_d798ab9e9d934de299a6c6325289dad6",
+        "600_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_600_italic_380400cd204c5affd0c7ad098d0b7942",
+        "bold_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_bold_italic_ed96b326ef7a54d2b45f0fdf958f6c8a",
+        "800_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_800_italic_17ca81c5839e027ec6a495b7e788a52e",
+        "900_italic": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_900_italic_b75d55e2a575d77a88d00e18ec6af839",
+        "100": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_100_645c26d3407f8a7839921c91e4cda62a",
+        "200": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_200_e5037b81b099fef7de2913a6ae4da711",
+        "300": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_300_84d7f647e3c7a2f3afa4ddbd39171721",
+        "normal": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_normal_b3f5cddfd313100d76ebe4cb06deabfb",
+        "500": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_500_ccccc44f93909eea9aa2b6984ff77dae",
+        "600": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_600_2f9100ddb5885ff084cc554ed6fe2602",
+        "bold": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_bold_595dc4c733528ac8b18fdc3b02b0bd1d",
+        "800": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/noto_sans_800_424f8918135654188beebd1fe63b4b95",
+        "900": "noto_sans_900_27597c44c9b9e0371bb57d1bd8b6f6ea"
+    },
+    "hind": {
+        "300": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/hind_300_67f25d9f010ac4a76fe5b551f7028418",
+        "normal": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/hind_normal_78de7bd2a18ba6ef7e8417fb7aecfc3c",
+        "500": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/hind_500_883b250649d0642210fbab9e9bb76458",
+        "600": "C:\\xampp\\htdocs\\coursesystem\\public\\assets\/fonts\/\/hind_600_bc81f82a2e3af8dd87592999f9331832",
+        "bold": "hind_bold_0427cc0f476c5cccedf97751c7092bda"
+    }
+}
